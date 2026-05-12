@@ -3,12 +3,12 @@ name = "filecanopy"
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.95.0"
-description = "Disk space analyzer, treemap visualizer, duplicate finder, and report generator."
+description = "GUI disk space analyzer, treemap visualizer, duplicate finder, and report generator."
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/duocast/filecanopy"
 readme = "README.md"
-keywords = ["disk", "storage", "treemap", "duplicates", "analyzer"]
-categories = ["command-line-utilities", "filesystem"]
+keywords = ["disk", "storage", "treemap", "duplicates", "gui"]
+categories = ["gui", "filesystem"]
 
 [[bin]]
 name = "filecanopy"
@@ -19,8 +19,16 @@ name = "filecanopy"
 path = "src/lib.rs"
 
 [dependencies]
-# CLI
-clap = { version = "4", features = ["derive", "env"] }
+# GUI
+iced = { version = "0.14.0", features = [
+    "tokio",
+    "canvas",
+    "svg",
+    "image",
+    "advanced",
+    "smol_str",
+] }
+rfd = "0.14"  # native file/folder pickers
 
 # Async / parallel scanning
 tokio = { version = "1", features = ["full"] }
@@ -41,13 +49,10 @@ toml = "0.8"
 rusqlite = { version = "0.31", features = ["bundled"] }
 
 # Reports
-printpdf = "0.7"           # PDF generation
-rust_xlsxwriter = "0.77"   # Excel export
-askama = "0.12"            # HTML templating
+printpdf = "0.7"
+rust_xlsxwriter = "0.77"
+askama = "0.12"
 csv = "1"
-
-# Treemap visualization (SVG/PNG output)
-plotters = { version = "0.3", default-features = false, features = ["svg_backend", "bitmap_backend"] }
 
 # Logging / error handling
 tracing = "0.1"
@@ -57,7 +62,6 @@ anyhow = "1"
 
 # Utilities
 humansize = "2"
-indicatif = "0.17"
 chrono = { version = "0.4", features = ["serde"] }
 dirs = "5"
 
@@ -72,8 +76,6 @@ windows = { version = "0.56", features = [
 nix = { version = "0.28", features = ["fs"] }
 
 [dev-dependencies]
-assert_cmd = "2"
-predicates = "3"
 tempfile = "3"
 criterion = "0.5"
 

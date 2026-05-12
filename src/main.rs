@@ -1,21 +1,8 @@
-use std::process::ExitCode;
+#![cfg_attr(all(windows, not(debug_assertions)), windows_subsystem = "windows")]
 
-use clap::Parser;
+use filecanopy::ui;
 
-use filecanopy::cli::Cli;
-use filecanopy::cli::commands;
-
-fn main() -> ExitCode {
+fn main() -> iced::Result {
     filecanopy::telemetry::init();
-
-    let cli = Cli::parse();
-
-    match commands::dispatch(cli) {
-        Ok(()) => ExitCode::SUCCESS,
-        Err(err) => {
-            tracing::error!(error = ?err, "filecanopy failed");
-            eprintln!("error: {err:#}");
-            ExitCode::FAILURE
-        }
-    }
+    ui::run()
 }

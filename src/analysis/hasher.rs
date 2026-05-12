@@ -1,10 +1,23 @@
 use std::path::Path;
 
-use crate::cli::args::HashAlgo;
+use serde::{Deserialize, Serialize};
+
 use crate::Result;
 
 /// Stable 256-bit content fingerprint, base16-encoded.
 pub type Fingerprint = String;
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+pub enum HashAlgo {
+    Blake3,
+    Xxh3,
+}
+
+impl Default for HashAlgo {
+    fn default() -> Self {
+        Self::Blake3
+    }
+}
 
 /// Hash a file's full contents with the chosen algorithm.
 pub fn hash_file(_path: &Path, _algo: HashAlgo) -> Result<Fingerprint> {

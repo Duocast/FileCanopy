@@ -8,9 +8,49 @@ pub mod pdf;
 
 use std::path::Path;
 
-use crate::cli::args::ExportFormat;
+use serde::{Deserialize, Serialize};
+
 use crate::scanner::ScanReport;
 use crate::Result;
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+pub enum ExportFormat {
+    Pdf,
+    Excel,
+    Html,
+    Csv,
+    Json,
+}
+
+impl ExportFormat {
+    pub const ALL: &'static [ExportFormat] = &[
+        ExportFormat::Pdf,
+        ExportFormat::Excel,
+        ExportFormat::Html,
+        ExportFormat::Csv,
+        ExportFormat::Json,
+    ];
+
+    pub fn label(self) -> &'static str {
+        match self {
+            ExportFormat::Pdf => "PDF",
+            ExportFormat::Excel => "Excel (.xlsx)",
+            ExportFormat::Html => "HTML",
+            ExportFormat::Csv => "CSV",
+            ExportFormat::Json => "JSON",
+        }
+    }
+
+    pub fn extension(self) -> &'static str {
+        match self {
+            ExportFormat::Pdf => "pdf",
+            ExportFormat::Excel => "xlsx",
+            ExportFormat::Html => "html",
+            ExportFormat::Csv => "csv",
+            ExportFormat::Json => "json",
+        }
+    }
+}
 
 /// Convenience dispatcher that picks an exporter based on `format` (or the
 /// extension of `out` when `format` is `None`).

@@ -1,5 +1,5 @@
 use filecanopy::analysis::duplicates;
-use filecanopy::cli::args::HashAlgo;
+use filecanopy::analysis::hasher::HashAlgo;
 use filecanopy::scanner::ScanReport;
 
 #[test]

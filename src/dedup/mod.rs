@@ -3,8 +3,21 @@
 use serde::{Deserialize, Serialize};
 
 use crate::analysis::DuplicatesReport;
-use crate::cli::args::DedupStrategy;
 use crate::Result;
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+pub enum DedupStrategy {
+    DryRun,
+    Delete,
+    Hardlink,
+    Symlink,
+}
+
+impl Default for DedupStrategy {
+    fn default() -> Self {
+        Self::DryRun
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct DedupOutcome {

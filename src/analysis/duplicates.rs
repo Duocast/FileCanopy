@@ -2,8 +2,7 @@ use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 
-use crate::analysis::hasher::Fingerprint;
-use crate::cli::args::HashAlgo;
+use crate::analysis::hasher::{Fingerprint, HashAlgo};
 use crate::scanner::ScanReport;
 use crate::Result;
 
