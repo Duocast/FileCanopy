@@ -5,7 +5,8 @@ use crate::ui::app::App;
 use crate::ui::message::Message;
 
 pub fn view(app: &App) -> Element<'_, Message> {
-    let follow = checkbox("Follow symbolic links", app.config.follow_symlinks)
+    let follow = checkbox(app.config.follow_symlinks)
+        .label("Follow symbolic links")
         .on_toggle(Message::ToggleFollowSymlinks);
 
     let mut ignores = column![text("Ignore globs").size(16)].spacing(4);
