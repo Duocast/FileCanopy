@@ -2,6 +2,7 @@
 //! `fn view(app: &App) -> Element<'_, Message>` so we can keep all state
 //! ownership in `App` and avoid per-screen substates.
 
+pub mod about;
 pub mod dashboard;
 pub mod duplicates;
 pub mod history;
@@ -27,6 +28,7 @@ pub enum Screen {
     Reports,
     Scheduler,
     Settings,
+    About,
 }
 
 impl Screen {
@@ -41,6 +43,7 @@ impl Screen {
         Screen::Reports,
         Screen::Scheduler,
         Screen::Settings,
+        Screen::About,
     ];
 
     pub fn label(self) -> &'static str {
@@ -55,6 +58,7 @@ impl Screen {
             Screen::Reports => "Reports",
             Screen::Scheduler => "Scheduler",
             Screen::Settings => "Settings",
+            Screen::About => "About",
         }
     }
 }
