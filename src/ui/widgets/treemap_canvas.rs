@@ -2,8 +2,7 @@
 //!
 //! The widget is *read-only* on `App`: it borrows the cached `SizeTree`
 //! (recomputed once per scan) and lays out tiles each frame using
-//! [`crate::visualization::treemap::layout`]. Click handling forwards
-//! `Message::TreemapTileClicked` for drill-down.
+//! [`crate::visualization::treemap::layout`].
 
 use iced::mouse;
 use iced::widget::canvas as canvas_widget;
@@ -12,7 +11,7 @@ use iced::{Color, Element, Length, Point, Rectangle, Renderer, Size, Theme};
 
 use crate::ui::app::App;
 use crate::ui::message::Message;
-use crate::visualization::treemap::{Tile, TreemapOptions};
+use crate::visualization::treemap::{self, TreemapOptions};
 
 pub struct TreemapCanvas<'a> {
     app: &'a App,
@@ -44,18 +43,17 @@ impl<'a> canvas_widget::Program<Message> for TreemapCanvas<'a> {
     ) -> Vec<Geometry> {
         let mut frame = Frame::new(renderer, bounds.size());
 
-        let Some(_report) = self.app.last_scan.as_ref() else {
+        let Some(tree) = self.app.last_size_tree.as_ref() else {
             return vec![frame.into_geometry()];
         };
 
-        // TODO: build/cache a SizeTree from the scan report on the App side,
-        // then call `visualization::treemap::layout(&tree, &opts)` here.
-        let tiles: Vec<Tile> = layout_placeholder(&TreemapOptions {
-            width: bounds.width as u32,
-            height: bounds.height as u32,
+        let opts = TreemapOptions {
+            width: bounds.width.max(1.0) as u32,
+            height: bounds.height.max(1.0) as u32,
             max_tiles: 500,
             color_by_extension: true,
-        });
+        };
+        let tiles = treemap::layout(tree, &opts);
 
         for tile in tiles {
             let rect = Path::rectangle(
@@ -74,15 +72,15 @@ impl<'a> canvas_widget::Program<Message> for TreemapCanvas<'a> {
 }
 
 fn color_for(label: &str) -> Color {
-    let h: u32 = label
+    let key = match label.rsplit_once('.') {
+        Some((_, ext)) if !ext.is_empty() => ext,
+        _ => label,
+    };
+    let h: u32 = key
         .bytes()
         .fold(2166136261u32, |a, b| (a ^ b as u32).wrapping_mul(16777619));
     let r = ((h >> 16) & 0xff) as f32 / 255.0;
     let g = ((h >> 8) & 0xff) as f32 / 255.0;
     let b = (h & 0xff) as f32 / 255.0;
     Color::from_rgb(r, g, b)
-}
-
-fn layout_placeholder(_opts: &TreemapOptions) -> Vec<Tile> {
-    Vec::new()
 }

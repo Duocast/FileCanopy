@@ -6,7 +6,7 @@ use std::sync::Arc;
 use iced::widget::{container, row};
 use iced::{Element, Length, Subscription, Task, Theme};
 
-use crate::analysis::DuplicatesReport;
+use crate::analysis::{DuplicatesReport, SizeTree};
 use crate::config::Config;
 use crate::dedup::{DedupOutcome, DedupStrategy};
 use crate::history::{DiffReport, Snapshot};
@@ -27,6 +27,7 @@ pub struct App {
     pub scan_in_progress: bool,
     pub scan_progress: ScanProgress,
     pub last_scan: Option<Arc<ScanReport>>,
+    pub last_size_tree: Option<Arc<SizeTree>>,
     pub last_error: Option<String>,
 
     // --- Duplicates / dedupe ---
@@ -125,6 +126,10 @@ impl App {
             }
             Message::ScanFinished(report) => {
                 self.scan_in_progress = false;
+                let roots: Vec<PathBuf> = self.scan_root.iter().cloned().collect();
+                self.last_size_tree = crate::analysis::tree::build(&report, &roots)
+                    .ok()
+                    .map(Arc::new);
                 self.last_scan = Some(report);
                 Task::none()
             }
