@@ -29,6 +29,13 @@ impl Default for TreemapOptions {
 pub struct Tile {
     pub label: String,
     pub size: u64,
+    /// Filesystem path of the item this tile represents. `None` for the
+    /// synthetic "(other)" aggregate tile produced when `max_tiles` truncates
+    /// the long tail.
+    pub path: Option<std::path::PathBuf>,
+    /// `true` when the tile represents a directory (drill-target), `false`
+    /// for a file or the aggregate tile.
+    pub is_dir: bool,
     pub x: f32,
     pub y: f32,
     pub w: f32,
@@ -66,10 +73,16 @@ pub fn render(tree: &SizeTree, opts: &TreemapOptions, out: &Path) -> Result<()> 
 /// Bruls, Huijsen, van Wijk (2000). Tiles in the returned vector are in the
 /// order they were laid out (row-by-row), not sorted by size.
 pub fn layout(tree: &SizeTree, opts: &TreemapOptions) -> Vec<Tile> {
+    layout_node(&tree.root, opts)
+}
+
+/// Like [`layout`] but lays out the children of an arbitrary `DirNode` so
+/// callers can drill into a subdirectory without rebuilding the whole tree.
+pub fn layout_node(node: &crate::analysis::tree::DirNode, opts: &TreemapOptions) -> Vec<Tile> {
     if opts.width == 0 || opts.height == 0 {
         return Vec::new();
     }
-    let mut items = top_level_items(tree);
+    let mut items = dir_items(node);
     if items.is_empty() {
         return Vec::new();
     }
@@ -80,6 +93,8 @@ pub fn layout(tree: &SizeTree, opts: &TreemapOptions) -> Vec<Tile> {
         items.push(Item {
             label: "(other)".into(),
             size: tail_sum,
+            path: None,
+            is_dir: false,
         });
         items.sort_by_key(|i| std::cmp::Reverse(i.size));
     }
@@ -95,6 +110,8 @@ pub fn layout(tree: &SizeTree, opts: &TreemapOptions) -> Vec<Tile> {
         .map(|i| ScaledItem {
             label: i.label,
             size: i.size,
+            path: i.path,
+            is_dir: i.is_dir,
             area: (i.size as f64) * scale,
         })
         .collect();
@@ -117,12 +134,16 @@ pub fn layout(tree: &SizeTree, opts: &TreemapOptions) -> Vec<Tile> {
 struct Item {
     label: String,
     size: u64,
+    path: Option<std::path::PathBuf>,
+    is_dir: bool,
 }
 
 #[derive(Debug, Clone)]
 struct ScaledItem {
     label: String,
     size: u64,
+    path: Option<std::path::PathBuf>,
+    is_dir: bool,
     area: f64,
 }
 
@@ -134,18 +155,22 @@ struct Rect {
     h: f64,
 }
 
-fn top_level_items(tree: &SizeTree) -> Vec<Item> {
-    let mut items: Vec<Item> = Vec::with_capacity(tree.root.children.len() + tree.root.files.len());
-    for c in &tree.root.children {
+fn dir_items(node: &crate::analysis::tree::DirNode) -> Vec<Item> {
+    let mut items: Vec<Item> = Vec::with_capacity(node.children.len() + node.files.len());
+    for c in &node.children {
         items.push(Item {
             label: file_name_label(&c.path),
             size: c.size,
+            path: Some(c.path.clone()),
+            is_dir: true,
         });
     }
-    for f in &tree.root.files {
+    for f in &node.files {
         items.push(Item {
             label: file_name_label(&f.path),
             size: f.size,
+            path: Some(f.path.clone()),
+            is_dir: false,
         });
     }
     items.retain(|i| i.size > 0);
@@ -238,6 +263,8 @@ fn layout_row(row: &[&ScaledItem], rect: Rect, out: &mut Vec<Tile>) -> Rect {
             out.push(Tile {
                 label: it.label.clone(),
                 size: it.size,
+                path: it.path.clone(),
+                is_dir: it.is_dir,
                 x: rect.x as f32,
                 y: y as f32,
                 w: strip_w as f32,
@@ -264,6 +291,8 @@ fn layout_row(row: &[&ScaledItem], rect: Rect, out: &mut Vec<Tile>) -> Rect {
             out.push(Tile {
                 label: it.label.clone(),
                 size: it.size,
+                path: it.path.clone(),
+                is_dir: it.is_dir,
                 x: x as f32,
                 y: rect.y as f32,
                 w: tw as f32,
