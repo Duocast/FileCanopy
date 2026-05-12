@@ -37,9 +37,10 @@ pub fn view(app: &App) -> Element<'_, Message> {
 
             let list = scrollable(list).height(Length::Fill).width(Length::FillPortion(3));
 
-            let details = details_panel(selected_path.and_then(|p| {
-                entries.iter().find(|e| e.path.as_path() == p)
-            }));
+            let selected_entry = selected_path
+                .and_then(|p| entries.iter().find(|e| e.path.as_path() == p))
+                .cloned();
+            let details = details_panel(selected_entry.as_ref());
 
             row![list, details].spacing(16).into()
         }
@@ -49,7 +50,7 @@ pub fn view(app: &App) -> Element<'_, Message> {
     column![header, body].spacing(12).into()
 }
 
-fn details_panel<'a>(selected: Option<&'a FileEntry>) -> Element<'a, Message> {
+fn details_panel(selected: Option<&FileEntry>) -> Element<'static, Message> {
     let inner: Element<'_, _> = match selected {
         Some(entry) => {
             let name = entry
@@ -93,7 +94,7 @@ fn details_panel<'a>(selected: Option<&'a FileEntry>) -> Element<'a, Message> {
 
             column![
                 text("File details").size(18),
-                Space::with_height(Length::Fixed(4.0)),
+                Space::new().height(Length::Fixed(4.0)),
                 detail_field("Name", name),
                 detail_field("Parent", parent),
                 detail_field("Extension", extension),
@@ -109,7 +110,7 @@ fn details_panel<'a>(selected: Option<&'a FileEntry>) -> Element<'a, Message> {
         }
         None => column![
             text("File details").size(18),
-            Space::with_height(Length::Fixed(4.0)),
+            Space::new().height(Length::Fixed(4.0)),
             text("Click a file in the list to see details.").size(13),
         ]
         .spacing(6)
@@ -123,7 +124,7 @@ fn details_panel<'a>(selected: Option<&'a FileEntry>) -> Element<'a, Message> {
         .into()
 }
 
-fn detail_field<'a>(label: &'a str, value: String) -> Element<'a, Message> {
+fn detail_field(label: &'static str, value: String) -> Element<'static, Message> {
     column![
         text(label).size(11),
         text(value).size(13),
