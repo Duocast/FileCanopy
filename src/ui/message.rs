@@ -26,8 +26,17 @@ pub enum Message {
     CancelScan,
 
     // --- Treemap ---
+    /// Drill into a subdirectory by clicking its tile, or drill up one level
+    /// when invoked with the parent of the current focus.
     TreemapTileClicked(PathBuf),
+    /// Pop the focus up one level (toward the scan root). Bound to the "Up"
+    /// button shown in the treemap breadcrumb.
+    TreemapFocusUp,
+    /// Reset focus back to the scan root.
+    TreemapFocusRoot,
+    /// Show more detail (more tiles, smaller minimum-size threshold).
     TreemapZoomIn,
+    /// Show less detail (fewer tiles, larger long-tail aggregate).
     TreemapZoomOut,
 
     // --- Largest files / "space hogs" ---
