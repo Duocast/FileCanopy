@@ -1,0 +1,22 @@
+/target
+**/*.rs.bk
+Cargo.lock.bak
+
+# Build artifacts
+*.pdb
+*.exe
+
+# Reports / generated output
+/reports/*.pdf
+/reports/*.xlsx
+/reports/*.html
+/reports/*.csv
+/reports/*.svg
+/snapshots/*.db
+
+# Editor / OS noise
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

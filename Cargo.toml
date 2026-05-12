@@ -1,0 +1,88 @@
+[package]
+name = "filecanopy"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.95.0"
+description = "Disk space analyzer, treemap visualizer, duplicate finder, and report generator."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/duocast/filecanopy"
+readme = "README.md"
+keywords = ["disk", "storage", "treemap", "duplicates", "analyzer"]
+categories = ["command-line-utilities", "filesystem"]
+
+[[bin]]
+name = "filecanopy"
+path = "src/main.rs"
+
+[lib]
+name = "filecanopy"
+path = "src/lib.rs"
+
+[dependencies]
+# CLI
+clap = { version = "4", features = ["derive", "env"] }
+
+# Async / parallel scanning
+tokio = { version = "1", features = ["full"] }
+rayon = "1"
+walkdir = "2"
+jwalk = "0.8"
+
+# Hashing for duplicate detection
+blake3 = "1"
+xxhash-rust = { version = "0.8", features = ["xxh3"] }
+
+# Serialization / config
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+
+# Storage for historical snapshots
+rusqlite = { version = "0.31", features = ["bundled"] }
+
+# Reports
+printpdf = "0.7"           # PDF generation
+rust_xlsxwriter = "0.77"   # Excel export
+askama = "0.12"            # HTML templating
+csv = "1"
+
+# Treemap visualization (SVG/PNG output)
+plotters = { version = "0.3", default-features = false, features = ["svg_backend", "bitmap_backend"] }
+
+# Logging / error handling
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+thiserror = "1"
+anyhow = "1"
+
+# Utilities
+humansize = "2"
+indicatif = "0.17"
+chrono = { version = "0.4", features = ["serde"] }
+dirs = "5"
+
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.56", features = [
+    "Win32_Foundation",
+    "Win32_Storage_FileSystem",
+    "Win32_System_TaskScheduler",
+] }
+
+[target.'cfg(unix)'.dependencies]
+nix = { version = "0.28", features = ["fs"] }
+
+[dev-dependencies]
+assert_cmd = "2"
+predicates = "3"
+tempfile = "3"
+criterion = "0.5"
+
+[[bench]]
+name = "scan_bench"
+harness = false
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+opt-level = 3
+strip = "symbols"
