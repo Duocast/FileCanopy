@@ -66,6 +66,33 @@ pub fn apply_dedup(report: Arc<DuplicatesReport>, strategy: DedupStrategy) -> Ta
     )
 }
 
+pub fn count_lines(
+    report: Arc<ScanReport>,
+    extensions: Vec<String>,
+    threshold: usize,
+) -> Task<Message> {
+    Task::perform(
+        async move {
+            tokio::task::spawn_blocking(move || {
+                crate::scanner::line_counter::count_entries(
+                    &report.entries,
+                    &extensions,
+                    threshold,
+                )
+            })
+            .await
+            .map_err(|e| e.to_string())
+            .and_then(|r| r.map_err(|e| e.to_string()))
+        },
+        |res| match res {
+            Ok(r) => Message::LineCountFinished(Arc::new(r)),
+            // No dedicated failure channel for line counting yet; fall back to NoOp
+            // so the button simply does nothing on the (rare) IO error path.
+            Err(_) => Message::NoOp,
+        },
+    )
+}
+
 pub fn export(report: Arc<ScanReport>, path: PathBuf, format: ExportFormat) -> Task<Message> {
     Task::perform(
         async move {

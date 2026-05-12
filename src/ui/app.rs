@@ -239,8 +239,19 @@ impl App {
                 Task::none()
             }
             Message::RunLineCount => {
-                // TODO: wire to scanner::line_counter::count via a Task
-                Task::none()
+                let Some(report) = self.last_scan.clone() else {
+                    return Task::none();
+                };
+                let extensions: Vec<String> = self
+                    .line_count_extensions
+                    .iter()
+                    .filter(|(_, on)| *on)
+                    .map(|(e, _)| e.clone())
+                    .collect();
+                if extensions.is_empty() {
+                    return Task::none();
+                }
+                crate::ui::tasks::count_lines(report, extensions, self.line_count_threshold)
             }
             Message::LineCountFinished(r) => {
                 self.last_line_count = Some(r);
