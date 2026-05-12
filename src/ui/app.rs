@@ -47,6 +47,7 @@ pub struct App {
     // --- Largest files ---
     pub largest_limit: usize,
     pub largest_min_size: Option<u64>,
+    pub largest_selected: Option<PathBuf>,
 
     // --- Line counter ---
     pub line_count_extensions: Vec<(String, bool)>,
@@ -142,6 +143,7 @@ impl App {
                     .map(Arc::new);
                 self.last_scan = Some(report);
                 self.treemap_focus = None;
+                self.largest_selected = None;
                 Task::none()
             }
             Message::ScanFailed(err) => {
@@ -192,6 +194,14 @@ impl App {
             }
             Message::LargestMinSizeChanged(min) => {
                 self.largest_min_size = min;
+                Task::none()
+            }
+            Message::LargestFileSelected(path) => {
+                if self.largest_selected.as_deref() == Some(path.as_path()) {
+                    self.largest_selected = None;
+                } else {
+                    self.largest_selected = Some(path);
+                }
                 Task::none()
             }
 

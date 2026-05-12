@@ -42,6 +42,9 @@ pub enum Message {
     // --- Largest files / "space hogs" ---
     LargestLimitChanged(usize),
     LargestMinSizeChanged(Option<u64>),
+    /// User clicked a row in the largest-files list. Toggles selection when
+    /// the same path is clicked twice.
+    LargestFileSelected(PathBuf),
 
     // --- Duplicates / dedupe ---
     FindDuplicates,
