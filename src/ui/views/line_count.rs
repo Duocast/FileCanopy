@@ -8,9 +8,9 @@ pub fn view(app: &App) -> Element<'_, Message> {
     let mut ext_row = row![].spacing(8);
     for (ext, enabled) in &app.line_count_extensions {
         let ext_clone = ext.clone();
-        ext_row = ext_row.push(checkbox(ext.clone(), *enabled).on_toggle(move |on| {
-            Message::LineCountExtToggled(ext_clone.clone(), on)
-        }));
+        ext_row = ext_row.push(checkbox(*enabled).label(ext.clone()).on_toggle(
+            move |on| Message::LineCountExtToggled(ext_clone.clone(), on),
+        ));
     }
 
     let run = {

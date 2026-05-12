@@ -10,8 +10,8 @@
 
 pub mod app;
 pub mod message;
-pub mod theme;
 pub mod tasks;
+pub mod theme;
 pub mod views;
 pub mod widgets;
 
@@ -19,9 +19,10 @@ use app::App;
 
 /// Launch the GUI. Blocks the calling thread until the window is closed.
 pub fn run() -> iced::Result {
-    iced::application(App::title, App::update, App::view)
+    iced::application(App::new, App::update, App::view)
+        .title(App::title)
         .theme(App::theme)
         .subscription(App::subscription)
         .window_size((1280.0, 800.0))
-        .run_with(App::new)
+        .run()
 }

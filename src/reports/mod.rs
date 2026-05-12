@@ -13,8 +13,9 @@ use serde::{Deserialize, Serialize};
 use crate::scanner::ScanReport;
 use crate::Result;
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
 pub enum ExportFormat {
+    #[default]
     Pdf,
     Excel,
     Html,
