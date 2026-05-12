@@ -313,6 +313,7 @@ impl App {
             Screen::Reports => views::reports::view(self),
             Screen::Scheduler => views::scheduler::view(self),
             Screen::Settings => views::settings::view(self),
+            Screen::About => views::about::view(self),
         };
 
         let sidebar = views::sidebar::view(self.screen);

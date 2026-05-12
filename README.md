@@ -1,5 +1,9 @@
 # FileCanopy
 
+<p align="center">
+  <img src="Assets/FileCanopyLogov1-transparent.png" alt="FileCanopy logo" width="320">
+</p>
+
 A cross-platform GUI disk-space analyzer written in Rust with **iced 0.14**.
 
 ## Features
