@@ -27,7 +27,7 @@ iced = { version = "0.14.0", features = [
     "image",
     "advanced",
 ] }
-rfd = "0.14"  # native file/folder pickers
+rfd = "0.17"  # native file/folder pickers (pulls in ashpd 0.13)
 
 # Async / parallel scanning
 tokio = { version = "1", features = ["full"] }
