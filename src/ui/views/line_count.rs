@@ -23,7 +23,15 @@ pub fn view(app: &App) -> Element<'_, Message> {
 
     let body: Element<'_, _> = match app.last_line_count.as_ref() {
         Some(report) => {
-            let mut col = column![text(format!("Total lines: {}", report.total_lines))].spacing(4);
+            let comment_lines = report.total_lines.saturating_sub(report.total_code_lines);
+            let mut col = column![
+                text(format!("Total lines: {}", report.total_lines)),
+                text(format!(
+                    "Total code lines: {} (excludes blank and comment-only lines, {} skipped)",
+                    report.total_code_lines, comment_lines
+                )),
+            ]
+            .spacing(4);
             if !report.monolithic.is_empty() {
                 col = col.push(
                     text(format!(
@@ -33,7 +41,12 @@ pub fn view(app: &App) -> Element<'_, Message> {
                     .size(16),
                 );
                 for f in &report.monolithic {
-                    col = col.push(text(format!("{} — {}", f.lines, f.path.display())));
+                    col = col.push(text(format!(
+                        "{} lines ({} code) — {}",
+                        f.lines,
+                        f.code_lines,
+                        f.path.display()
+                    )));
                 }
             }
             scrollable(col).height(Length::Fill).into()
