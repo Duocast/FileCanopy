@@ -53,6 +53,8 @@ pub struct App {
     pub line_count_extensions: Vec<(String, bool)>,
     pub line_count_threshold: usize,
     pub last_line_count: Option<Arc<crate::scanner::line_counter::LineCountReport>>,
+    pub line_count_sort_column: crate::ui::views::line_count::LineCountSortColumn,
+    pub line_count_sort_direction: crate::ui::views::line_count::SortDirection,
 
     // --- History ---
     pub snapshot_label: String,
@@ -265,6 +267,16 @@ impl App {
             }
             Message::LineCountFinished(r) => {
                 self.last_line_count = Some(r);
+                Task::none()
+            }
+            Message::LineCountSortBy(col) => {
+                if self.line_count_sort_column == col {
+                    self.line_count_sort_direction = self.line_count_sort_direction.toggle();
+                } else {
+                    self.line_count_sort_column = col;
+                    self.line_count_sort_direction =
+                        crate::ui::views::line_count::SortDirection::Descending;
+                }
                 Task::none()
             }
 

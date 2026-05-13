@@ -59,6 +59,9 @@ pub enum Message {
     LineCountThresholdChanged(usize),
     RunLineCount,
     LineCountFinished(Arc<crate::scanner::line_counter::LineCountReport>),
+    /// Click a column header in the line-count table. Sets the active sort
+    /// column, or toggles direction when the same column is clicked again.
+    LineCountSortBy(crate::ui::views::line_count::LineCountSortColumn),
 
     // --- History / over-time comparison ---
     SnapshotLabelChanged(String),
