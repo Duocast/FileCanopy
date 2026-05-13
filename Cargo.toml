@@ -31,56 +31,56 @@ iced = { version = "0.14.0", features = [
 rfd = "0.17"  # native file/folder pickers (pulls in ashpd 0.13)
 
 # Async / parallel scanning
-tokio = { version = "1", features = ["full"] }
-rayon = "1"
-walkdir = "2"
-jwalk = "0.8"
+tokio = { version = "1.52.3", features = ["full"] }
+rayon = "1.12.0"
+walkdir = "2.5.0"
+jwalk = "0.8.1"
 
 # Hashing for duplicate detection
-blake3 = "1"
-xxhash-rust = { version = "0.8", features = ["xxh3"] }
+blake3 = "1.8.5"
+xxhash-rust = { version = "0.8.15", features = ["xxh3"] }
 
 # Serialization / config
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-toml = "0.8"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+toml = "1.1.2"
 
 # Storage for historical snapshots
-rusqlite = { version = "0.31", features = ["bundled"] }
+rusqlite = { version = "0.39.0", features = ["bundled"] }
 
 # Reports
 printpdf = "0.9.1"
-rust_xlsxwriter = "0.77"
-askama = "0.12"
-csv = "1"
+rust_xlsxwriter = "0.95.0"
+askama = "0.16.0"
+csv = "1.4.0"
 
 # Logging / error handling
-tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-thiserror = "1"
-anyhow = "1"
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+thiserror = "2.0.18"
+anyhow = "1.0.102"
 
 # Utilities
 humansize = "2"
-chrono = { version = "0.4", features = ["serde"] }
-dirs = "5"
+chrono = { version = "0.4.44", features = ["serde"] }
+dirs = "6.0.0"
 
 [target.'cfg(windows)'.dependencies]
-windows = { version = "0.56", features = [
+windows = { version = "0.62.2", features = [
     "Win32_Foundation",
     "Win32_Storage_FileSystem",
     "Win32_System_TaskScheduler",
 ] }
 
 [target.'cfg(unix)'.dependencies]
-nix = { version = "0.28", features = ["fs"] }
+nix = { version = "0.31.3", features = ["fs"] }
 
 [build-dependencies]
-winresource = "0.1"
+winresource = "0.1.31"
 
 [dev-dependencies]
-tempfile = "3"
-criterion = "0.5"
+tempfile = "3.27.0"
+criterion = "0.8.2"
 
 [[bench]]
 name = "scan_bench"
