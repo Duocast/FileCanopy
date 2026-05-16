@@ -428,7 +428,9 @@ fn parent_focus(
 }
 
 fn default_extensions() -> Vec<(String, bool)> {
-    ["rs", "py", "ts", "tsx", "js", "jsx", "go", "java", "c", "cpp", "h", "hpp"]
+    [
+        "rs", "py", "ts", "tsx", "js", "jsx", "go", "java", "c", "cpp", "h", "hpp", "kt", "swift",
+    ]
         .iter()
         .map(|e| ((*e).to_string(), false))
         .collect()
