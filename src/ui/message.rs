@@ -62,6 +62,9 @@ pub enum Message {
     /// Click a column header in the line-count table. Sets the active sort
     /// column, or toggles direction when the same column is clicked again.
     LineCountSortBy(crate::ui::views::line_count::LineCountSortColumn),
+    /// Click a file's path in the line-count table to copy it to the
+    /// system clipboard.
+    CopyLineCountPath(String),
 
     // --- History / over-time comparison ---
     SnapshotLabelChanged(String),
