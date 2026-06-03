@@ -279,6 +279,7 @@ impl App {
                 }
                 Task::none()
             }
+            Message::CopyLineCountPath(path) => iced::clipboard::write(path),
 
             // --- History ---
             Message::SnapshotLabelChanged(s) => {

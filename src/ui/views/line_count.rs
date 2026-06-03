@@ -204,6 +204,14 @@ fn file_row(f: &FileLineCount, threshold: u64) -> Element<'static, Message> {
     } else {
         f.lines.to_string()
     };
+    let path_str = f.path.display().to_string();
+    // Render the path as a borderless button so the user can click it to
+    // copy the full file path to the clipboard.
+    let path_cell = button(text(path_str.clone()).size(13))
+        .padding(0)
+        .width(Length::Fill)
+        .on_press(Message::CopyLineCountPath(path_str))
+        .style(button::text);
     row![
         text(lines_text).size(13).width(Length::Fixed(COL_LINES)),
         text(f.code_lines.to_string()).size(13).width(Length::Fixed(COL_CODE)),
@@ -211,7 +219,7 @@ fn file_row(f: &FileLineCount, threshold: u64) -> Element<'static, Message> {
         text(humansize::format_size(f.bytes, humansize::DECIMAL))
             .size(13)
             .width(Length::Fixed(COL_BYTES)),
-        text(f.path.display().to_string()).size(13),
+        path_cell,
     ]
     .spacing(4)
     .padding([2, 8])
